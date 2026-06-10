@@ -1,0 +1,1 @@
+bahwa identifikasi itu gabisa pake clustering jadi gabisa dikasih label support atau resistance paling prediksi, sama masalah yang mau di ajukan itu apa kan bisa menentukan zona itu dari tarik chart metode konvensional kenapa harus saya bikin model ini gitu padahal sama sama dari data asli cuman hasil visualisasi nya yang beda katanya

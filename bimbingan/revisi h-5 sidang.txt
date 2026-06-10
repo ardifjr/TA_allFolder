@@ -1,0 +1,19 @@
+bab 1 jadi urgensi penelitian nya apa masalah nya apa faktor yang mempengaruhi nya apa data data nya apa kemudian di akhir munculkan solusi dari masalah itu apa dari penelitian saya ini itu
+
+masalah nya itu karna Saham sektor energi di Bursa Efek Indonesia dikenal memiliki volatilitas yang tinggi kemudian sektor ini sangat sensitif terhadap faktor makroekonomi global kemudian menunjukkan bahwa ketidakpastian politik meningkatkan volatilitas pasar saham, khususnya di negara berkembang seperti Indonesia yang menyebabkan analis sering berbeda dalam penarikan garis menentukan support sama resistance dalam metode konvensional
+
+
+nah jadi latar belakang nya itu langsung pada intinya data data nya terus masalah nya apa, faktor yang mempengaruhi nya apa, kemudian oleh karena itu diperlukan pendekatan bla bla bla bla gitu
+
+kemudian singgung juga judul nya dibahas di latar belakang support resistance itu apa terus sektor energi itu apa
+kurangi bahasa ai
+
+judul nya dibahas di latar belakang support resistance itu apa terus sektor energi itu apa
+
+
+bab 2 tambahin yang 6 tahap itu di jelaskan, terus kurangin yang ga perlu atau tidak ada korelasi
+gini nih bei sedikit, terus sektor energi perkembangan nya gimana, terus ke data ohlcv, masuk ke machine learning dikit terus ke 6 tahap itu terus ke evaluasi model
+
+bab 3 flowchart nya bikin secara umum bahasa nya, tambahkan flowchart alur sistem secara umum sebagai penutup nya sama kebutuhan aplikasi 
+
+

@@ -1,0 +1,77 @@
+menentukan titik support dan resistance menggunakan k-means clusstering menggunakan data data sekunder histori harga dari bei atau idx 6 tahun kebelakang studi kasus pada saham sektor minyak gas dan batu bara cara menentukan titik support nya itu gini Singkatnya, algoritma deteksi Support & Resistance ini bekerja dalam 6 tahap utama untuk menemukan zona harga penting:
+Deteksi Pivot Points → Cari titik swing high (potensi resistance) dan swing low (potensi support) menggunakan metode local extrema.
+Filter Berdasarkan Harga Saat Ini → Hanya ambil pivot low di bawah harga (support) dan pivot high di atas harga (resistance).
+Standardisasi Data (Z-score) → Normalisasi nilai agar bisa diproses lebih adil oleh algoritma clustering.
+K-Means Clustering → Kelompokkan pivot yang berdekatan menjadi zona harga.
+Penentuan Zona (Range) → Setiap cluster diubah jadi rentang harga (min–max + margin), karena support/resistance lebih berupa area daripada garis tunggal.
+Scoring & Selection → Dari semua zona, dipilih 1 support dan 1 resistance paling kuat berdasarkan:
+Strength (jumlah sentuhan / pivot di zona)
+Kedekatan dengan harga saat ini
+Hasil akhirnya:
+1 zona Support (area di bawah harga, sering diuji, dekat dengan harga)
+1 zona Resistance (area di atas harga, sering diuji, dekat dengan harga)
+Intinya: algoritma ini menggabungkan analisis teknikal klasik (support/resistance dari pivot points) dengan metode machine learning (normalisasi, clustering, scoring) supaya level yang dihasilkan lebih objektif dan reliabel., terus titik titik support hasil dari k-means itu kan jadi data primer saya sendiri di uji efektifitas nya menggunakan backtesting
+
+==================================================================================================================
+
+code : https://claude.ai/chat/bd406de0-9dec-441f-99c3-a2ee52adecde
+
+==================================================================================================================
+
+
+logika algoritma code proses nyari tiitk s&r = https://docs.google.com/document/d/1BF2QZMHyDbEWzvU4w79bMVTaBdVFrZlRo3gp4rBUAQg/edit?tab=t.0
+
+==================================================================================================================
+Input Data: menggunakan data OHLCV saham (Open, High, Low, Close, Volume).
+
+Step 1 – Pivot Points: mendeteksi titik pembalikan harga (swing high sebagai resistance, swing low sebagai support).
+
+Step 2 – Filtering: memilih support yang posisinya di bawah harga saat ini, dan resistance yang posisinya di atas harga saat ini.
+
+Step 3 – Standardisasi: data kandidat support/resistance dinormalisasi dengan Z-score agar skala seragam sebelum clustering.
+
+Step 4 – K-Means Clustering: mengelompokkan titik-titik harga berdekatan menjadi zona support dan resistance.
+
+Step 5 – Penentuan Zona: setiap cluster diubah menjadi rentang harga (min–max) dengan margin tambahan, karena support/resistance dianggap area, bukan garis tunggal.
+
+Step 6 – Scoring & Selection: zona terbaik dipilih berdasarkan dua faktor:
+
+Strength: jumlah pivot/touch points.
+
+Distance: seberapa dekat zona dengan harga saat ini.
+
+Output: 1 zona support dan 1 zona resistance yang paling valid, siap digunakan untuk analisis trading.
+
+==================================================================================================================
+Blueprint :
+ppt https://www.canva.com/design/DAG1HKVLHf0/1VSiQWJBITn6o8Vf9nzWxA/edit?utm_content=DAG1HKVLHf0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
+docx https://docs.google.com/document/d/1jiKdlFnOm0E-lOgW_dIPZS9BZGSmNYaW14bug6eIM8U/edit?tab=t.0
+
+==================================================================================================================
+
+yang menyatakan data nya itu < 20 hari https://www.investopedia.com/terms/s/swinglow.asp
+
+penelitian menentukan s/r itu efektif nya berapa lama periode :
+1.  https://claude.ai/chat/446823da-4764-4ba0-b903-67e6c45b6471
+2. https://gemini.google.com/u/2/app/6b9e5d54cecd0bfb?android-min-version=301356232&ios-min-version=322.0&is_sa=1&campaign_id=gemini_plans_page&utm_source=gemini&utm_medium=referral&utm_campaign=gemini_plans_page&pt=9008&mt=8&ct=gemini_plans_page&hl=id&_gl=1*10hwjan*_gcl_aw*R0NMLjE3NTMwMjU3MzAuQ2p3S0NBandwX0xEQmhCQ0Vpd0FLN0Zua3NWcEprM0ZteVpJUVZtYkJQaERtTV9DRUdPdUtXTmExUnFucEZWZm9xWi1sZ251eFdSWF94b0NTTHdRQXZEX0J3RQ..*_gcl_dc*R0NMLjE3NTMwMjU3MzAuQ2p3S0NBandwX0xEQmhCQ0Vpd0FLN0Zua3NWcEprM0ZteVpJUVZtYkJQaERtTV9DRUdPdUtXTmExUnFucEZWZm9xWi1sZ251eFdSWF94b0NTTHdRQXZEX0J3RQ..*_gcl_au*MjA3ODI1OTE5MS4xNzUzMDI1MjMx*_ga*NzM5OTcxNjkuMTc1MzAyNTIzMQ..*_ga_WC57KJ50ZZ*czE3NTMwMjUyMzEkbzEkZzEkdDE3NTMwMjU3NDQkajQ2JGwwJGgw&pageId=none
+
+kutipan = "https://medium.com/@cemalozturk/market-analysis-with-k-means-clustering-algorithm-identifying-support-and-resistance-levels-f49b963924f5" Cemal Öztürk, Ph.D. (2024) melakukan Market Analysis with K-Means Clustering Algorithm: Identifying Support and Resistance Levels pada saham google dalam periode selama 6 tahun sebagai data testing nya dan dia mengatakan "Algoritma pengelompokan K-means menawarkan pendekatan yang efektif untuk mengidentifikasi level support dan resistance di pasar keuangan." makanya saya menggunakan 6 tahun juga gitu
+
+==================================================================================================================
+
+alasan kenapa saya 6 tahap, harus ada argumen kalo tahap lain di k-means itu jelek
+
+https://gemini.google.com/u/2/app/6d9c87e7ea832396?android-min-version=301356232&ios-min-version=322.0&is_sa=1&campaign_id=gemini_plans_page&utm_source=gemini&utm_medium=referral&utm_campaign=gemini_plans_page&pt=9008&mt=8&ct=gemini_plans_page&hl=id&_gl=1*10hwjan*_gcl_aw*R0NMLjE3NTMwMjU3MzAuQ2p3S0NBandwX0xEQmhCQ0Vpd0FLN0Zua3NWcEprM0ZteVpJUVZtYkJQaERtTV9DRUdPdUtXTmExUnFucEZWZm9xWi1sZ251eFdSWF94b0NTTHdRQXZEX0J3RQ..*_gcl_dc*R0NMLjE3NTMwMjU3MzAuQ2p3S0NBandwX0xEQmhCQ0Vpd0FLN0Zua3NWcEprM0ZteVpJUVZtYkJQaERtTV9DRUdPdUtXTmExUnFucEZWZm9xWi1sZ251eFdSWF94b0NTTHdRQXZEX0J3RQ..*_gcl_au*MjA3ODI1OTE5MS4xNzUzMDI1MjMx*_ga*NzM5OTcxNjkuMTc1MzAyNTIzMQ..*_ga_WC57KJ50ZZ*czE3NTMwMjUyMzEkbzEkZzEkdDE3NTMwMjU3NDQkajQ2JGwwJGgw&pli=1
+dan
+https://claude.ai/chat/7b0146f9-126b-4784-8579-28687ecf9eca
+
+Pendekatan 2 tahap yang hanya mendeteksi pivot points lalu langsung clustering akan mengalami bias skala fatal. menurut (Chantha Wongoutong 2024) bahwa mengabaikan feature scaling sangat merugikan kinerja K-Means dalam metrik akurasi, presisi, dan recall. Dalam konteks data 6 tahun saham BEI sektor energi yang volatil, tanpa Z-score normalization (Tahap 3), algoritma akan bias terhadap harga-harga tertinggi (data terbaru), mengabaikan kekuatan historis level support/resistance dari tahun-tahun awal, meskipun level tersebut telah teruji berkali-kali."
+
+Menurut Bajaj Finserv (2025), pivot points tradisional dihitung berdasarkan data harga masa lalu dan seringkali tidak memiliki daya prediktif yang kuat tanpa konfirmasi atau penyaringan statistik. Finance Strategists (2025) juga menegaskan bahwa pivot points sangat rentan terhadap inefektivitas di pasar dengan volatilitas ekstrem.
+Dalam konteks saham sektor minyak, gas, dan batu bara di BEI yang sangat volatil, deteksi pivot points murni tanpa filtering akan menghasilkan outlier dan noise pasar yang berlebihan. Dhakal (2024) dalam penelitiannya tentang penggunaan machine learning dan pivot points menekankan pentingnya filtering untuk memberikan relevansi kontekstual pada pivot points, dengan membatasi analisis hanya pada pivot low di bawah harga saat ini dan pivot high di atas harga saat ini.
+Tanpa Tahap 2 ini, K-Means akan mengelompokkan titik data yang tidak relevan, yang sebagian besar hanyalah fluktuasi harga sesaat.
+
+Dalam analisis teknikal fundamental, Support dan Resistance diidentifikasi sebagai level harga spesifik. Namun, Al-Abdullah & Mubasher (2024) dalam penelitiannya tentang strategi support dan resistance di pasar finansial internasional menjelaskan bahwa metode sederhana yang menghasilkan angka tunggal (seperti pivot point harian standar) cenderung kurang akurat karena pasar bereaksi dalam rentang harga, bukan pada titik harga yang tepat.
+Hal ini diperkuat oleh Investopedia (2025) yang menyatakan bahwa level S&R secara konsisten dijelaskan dalam literatur finansial sebagai zona atau area harga, di mana konsentrasi minat beli atau jual signifikan terjadi, bukan garis tunggal yang presisi.
+Oleh karena itu, Tahap 5 yang mengkonversi centroid K-Means menjadi zona harga adalah keharusan konseptual untuk memastikan output algoritma mencerminkan mekanisme pasar yang sebenarnya.

@@ -1,0 +1,29 @@
+revisi didalam laporan yang diberikan kepada pak milda :
+1. pa milda revisi format penulisan seperti bg jangan gelap, penulisan sub bab, point point dan keterangan gambar, daftar gambar, penulisan rumus itu harus ada persamaan nya (=), 
+2. data yang di uji itu 6 tahun dari tahun berapa sampe berapa
+3. jelaskan yang dimaksud dengan teknikal itu apa
+4. menghitung seberapa efektif itu angka nya berapa dikatakan efektif itu harus ada pondasi nya
+5. ruang lingkup itu tambahkan identifikasi support dan resistance
+6. ini tuh membuat model baru atau pengujian dengan model model terbaik
+7. arti volatilitas 2.3.3
+
+revisi saat presentasi sempro :
+1. bg gambar putih
+2. backtesting itu apa bagaimana
+3. algoritma jangan model >>> ?????
+4. baik nya itu berapa persen evaluasi nya itu yang baik jadi ada pondasi nya
+5. ketahanan itu ada kriteria nya nilai pengujian nya berapa soalnya kan di tujuan ada seberapa tahan model ini bla bla bla
+6. alasan nya ketika apa di latar belakang
+7. ujung nya itu apa ? aplikasi atau model atau apa
+8. evaluasi trading atau machine learning 1252777?, karna if jadi jangan trading hasilnya tapi ke evaluasi model metrik performa
+9. riwayat waktu nya di jelasin harus jelas
+10. metrik itu bagus ketika apa harus ada patokan nya
+11. model ? apa hal apa yang diubah atau digabung
+12. cara prediksi gorengan yang waktu nya lama lama itu gimana cara ngatasin nya
+
+
+
+magang ini beres awal juni
+semhas juni
+sinta5 1-2bulan
+q3 lama

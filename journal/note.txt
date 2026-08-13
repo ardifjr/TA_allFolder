@@ -1,0 +1,12 @@
+✅ Maksimal 10 halaman
+✅ Dua kolom
+✅ A4
+✅ Margin sesuai template
+✅ Abstract tanpa sitasi
+✅ 4–5 keyword
+✅ Sitasi IEEE ([1], [2])
+✅ Daftar pustaka IEEE
+✅ Caption tabel di atas, gambar di bawah
+✅ Nomor tabel Romawi (TABLE I, TABLE II)
+✅ Nomor gambar Arab (Fig. 1, Fig. 2)
+✅ Tidak ada nomor halaman

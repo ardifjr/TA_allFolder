@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stockbit API Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .status.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            display: block;
+        }
+
+        .data-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .number {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .positive {
+            color: #28a745;
+        }
+
+        .negative {
+            color: #dc3545;
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: black;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .info-badge {
+            background: #ffc107;
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .sort-controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .sort-controls label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        select {
+            padding: 8px 15px;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        select:hover {
+            border-color: #764ba2;
+        }
+
+        th {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        th:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #653a8b 100%);
+        }
+
+        th.sortable::after {
+            content: ' ⇅';
+            opacity: 0.5;
+        }
+
+        th.sorted-asc::after {
+            content: ' ▲';
+            opacity: 1;
+        }
+
+        th.sorted-desc::after {
+            content: ' ▼';
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="controls">
+            <button id="fetchBtn" onclick="fetchData()">Fetch Data</button>
+            <div id="status" class="status"></div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('all')">Semua Data</button>
+            <button class="tab" onclick="switchTab('senior')">6+ Tahun di Bursa <span class="info-badge" id="seniorCount">0</span></button>
+            <button class="tab" onclick="switchTab('table')">Table View</button>
+            <button class="tab" onclick="switchTab('json')">JSON View</button>
+        </div>
+
+        <div class="data-container">
+            <div id="allView" class="tab-content active">
+                <div id="allTableContainer"></div>
+            </div>
+            <div id="seniorView" class="tab-content">
+                <div id="seniorTableContainer"></div>
+            </div>
+            <div id="tableView" class="tab-content">
+                <div id="tableContainer"></div>
+            </div>
+            <div id="jsonView" class="tab-content">
+                <pre id="jsonContainer"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let rawData = null;
+        let extractedData = [];
+        let seniorStocksData = [];
+        let currentSort = { column: null, direction: 'asc' };
+        let currentView = 'all';
+
+        const seniorStocks = [
+            { symbol: 'ADRO', name: 'Adaro Energy Indonesia Tbk.', listingDate: '16 Jul 2008' },
+            { symbol: 'AKRA', name: 'AKR Corporindo Tbk.', listingDate: '03 Okt 1994' },
+            { symbol: 'APEX', name: 'Apexindo Pratama Duta Tbk.', listingDate: '10 Jul 2002' },
+            { symbol: 'ARII', name: 'Atlas Resources Tbk.', listingDate: '08 Nov 2011' },
+            { symbol: 'BBRM', name: 'Pelayaran Nasional Bina Buana Raya Tbk.', listingDate: '09 Jan 2013' },
+            { symbol: 'BIPI', name: 'Astrindo Nusantara Infrastruktur Tbk.', listingDate: '11 Feb 2010' },
+            { symbol: 'BULL', name: 'Buana Lintas Lautan Tbk.', listingDate: '23 Mei 2011' },
+            { symbol: 'BUMI', name: 'Bumi Resources Tbk.', listingDate: '30 Jul 1990' },
+            { symbol: 'CNKO', name: 'Exploitasi Energi Indonesia Tbk.', listingDate: '20 Nov 2001' },
+            { symbol: 'DEWA', name: 'Darma Henwa Tbk.', listingDate: '26 Sep 2007' },
+            { symbol: 'DOID', name: 'Delta Dunia Makmur Tbk. (BUMA)', listingDate: '15 Jun 2001' },
+            { symbol: 'DSSA', name: 'Dian Swastatika Sentosa Tbk.', listingDate: '10 Des 2009' },
+            { symbol: 'DWGL', name: 'Dwi Guna Laksana Tbk.', listingDate: '13 Des 2017' },
+            { symbol: 'ELSA', name: 'Elnusa Tbk.', listingDate: '06 Feb 2008' },
+            { symbol: 'ENRG', name: 'Energi Mega Persada Tbk.', listingDate: '07 Jun 2004' },
+            { symbol: 'FIRE', name: 'Alfa Energi Investama Tbk.', listingDate: '09 Jun 2017' },
+            { symbol: 'HRUM', name: 'Harum Energy Tbk.', listingDate: '06 Okt 2010' },
+            { symbol: 'IATA', name: 'MNC Energy Investments Tbk.', listingDate: '13 Sep 2006' },
+            { symbol: 'INDY', name: 'Indika Energy Tbk.', listingDate: '11 Jun 2008' },
+            { symbol: 'INPS', name: 'Indah Prakasa Sentosa Tbk.', listingDate: '06 Apr 2018' },
+            { symbol: 'ITMA', name: 'Sumber Energi Andalan Tbk.', listingDate: '10 Des 1990' },
+            { symbol: 'ITMG', name: 'Indo Tambangraya Megah Tbk.', listingDate: '18 Des 2007' },
+            { symbol: 'KKGI', name: 'Resource Alam Indonesia Tbk.', listingDate: '01 Jul 1991' },
+            { symbol: 'LEAD', name: 'Logindo Samudramakmur Tbk.', listingDate: '11 Des 2013' },
+            { symbol: 'MBSS', name: 'Mitrabahtera Segara Sejati Tbk.', listingDate: '06 Apr 2011' },
+            { symbol: 'MEDC', name: 'Medco Energi Internasional Tbk.', listingDate: '12 Okt 1994' },
+            { symbol: 'MTFN', name: 'Capitalinc Investment Tbk.', listingDate: '16 Apr 1990' },
+            { symbol: 'PGAS', name: 'Perusahaan Gas Negara Tbk.', listingDate: '15 Des 2003' },
+            { symbol: 'PTBA', name: 'Bukit Asam Tbk.', listingDate: '23 Des 2002' },
+            { symbol: 'PTRO', name: 'Petrosea Tbk.', listingDate: '21 Mei 1990' },
+            { symbol: 'RAJA', name: 'Rukun Raharja Tbk.', listingDate: '19 Apr 2006' },
+            { symbol: 'RUIS', name: 'Radiant Utama Interinsco Tbk.', listingDate: '12 Jul 2006' },
+            { symbol: 'SOCI', name: 'Soechi Lines Tbk.', listingDate: '03 Des 2014' },
+            { symbol: 'SURE', name: 'Super Energy Tbk.', listingDate: '05 Okt 2018' },
+            { symbol: 'TAMU', name: 'Pelayaran Tamarin Samudra Tbk.', listingDate: '10 Mei 2017' },
+            { symbol: 'TCPI', name: 'Transcoal Pacific Tbk.', listingDate: '06 Jul 2018' },
+            { symbol: 'TEBE', name: 'Dana Brata Luhur Tbk.', listingDate: '18 Nov 2019' },
+            { symbol: 'TOBA', name: 'TBS Energi Utama Tbk.', listingDate: '06 Jul 2012' },
+            { symbol: 'TPMA', name: 'Trans Power Marine Tbk.', listingDate: '20 Feb 2013' },
+            { symbol: 'WINS', name: 'Wintermar Offshore Marine Tbk.', listingDate: '29 Nov 2010' },
+            { symbol: 'WOWS', name: 'Ginting Jaya Energi Tbk.', listingDate: '12 Nov 2019' }
+        ];
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'View').classList.add('active');
+            currentView = tab;
+        }
+
+        function sortData(column) {
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'asc';
+            }
+
+            const dataToSort = currentView === 'senior' ? seniorStocksData : extractedData;
+            const sorted = [...dataToSort].sort((a, b) => {
+                let aVal = a[column];
+                let bVal = b[column];
+
+                if (['marketcap', 'value', 'valuema20', 'volume'].includes(column)) {
+                    aVal = parseFloat(aVal) || 0;
+                    bVal = parseFloat(bVal) || 0;
+                } else {
+                    aVal = String(aVal).toLowerCase();
+                    bVal = String(bVal).toLowerCase();
+                }
+
+                if (currentSort.direction === 'asc') {
+                    return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+                } else {
+                    return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
+                }
+            });
+
+            if (currentView === 'senior') {
+                displayTable(sorted, 'seniorTableContainer', true);
+            } else {
+                displayTable(sorted, 'allTableContainer', false);
+            }
+            updateSortIndicators();
+        }
+
+        function updateSortIndicators() {
+            document.querySelectorAll('th').forEach(th => {
+                th.classList.remove('sorted-asc', 'sorted-desc');
+            });
+
+            if (currentSort.column) {
+                const columnMap = {
+                    'name': 1,
+                    'symbol': 2,
+                    'marketcap': 3,
+                    'value': 4,
+                    'valuema20': 5,
+                    'volume': 6
+                };
+                const thIndex = columnMap[currentSort.column];
+                const th = document.querySelectorAll('th')[thIndex];
+                if (th) {
+                    th.classList.add(currentSort.direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+                }
+            }
+        }
+
+        function formatNumber(num) {
+            if (!num) return '-';
+            const number = parseFloat(num);
+            return number.toLocaleString('id-ID', { maximumFractionDigits: 2 });
+        }
+
+        function formatMarketCap(num) {
+            if (!num) return '-';
+            const number = parseFloat(num);
+            const trillion = number / 1000000000000;
+            const billion = number / 1000000000;
+            
+            if (trillion >= 1) {
+                return trillion.toFixed(2) + ' T';
+            } else if (billion >= 1) {
+                return billion.toFixed(2) + ' M';
+            } else {
+                return formatNumber(number);
+            }
+        }
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = 'status ' + type;
+        }
+
+        async function fetchData() {
+            const btn = document.getElementById('fetchBtn');
+            btn.disabled = true;
+            showStatus('Mengambil data...', 'loading');
+
+            try {
+                const response = await fetch('https://exodus.stockbit.com/emitten/v3/sector/7/subsector/19/company', {
+                    headers: {
+                        'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjU3MDc0NjI3LTg4MWItNDQzZC04OTcyLTdmMmMzOTNlMzYyOSIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZSI6ImFyZGlmYWphcm1hdWxhbmEiLCJlbWEiOiJhcmRpZmpyMjdAZ21haWwuY29tIiwiZnVsIjoiYXJkaWZqciIsInNlcyI6IlBKOUVNb3lRM3Fua3JmeXYiLCJkdmMiOiJhMmRhNjE2Y2YyM2QwMmNmZjc5NmJkOWMxNThmNWU0MCIsInVpZCI6MTA2NzI0NiwiY291IjoiSUQifSwiZXhwIjoxNzY2ODEzMzY4LCJpYXQiOjE3NjY3MjY5NjgsImlzcyI6IlNUT0NLQklUIiwianRpIjoiOTI0NmI0YzgtZTUyNy00ZTk3LTk5YmYtOWIzN2QwNTJmMmU3IiwibmJmIjoxNzY2NzI2OTY4LCJ2ZXIiOiJ2MSJ9.tKnbFclFtDLAZwl8sNVzOKqxVDK5nJUz3xfuhfJNqpFMNxxDwFl5m1JQhDdyUnnELgjz2AQfMgKoNiVQ78XLDNQr3rmlbiXlJFztpWYTZ-_buQL8e7uZ9ZY29Yd59Ulyba4bifjbMg3qoTX9C87Y2RLvFPLT7Qd0YuMtyAmA-au8rqz6MwqG0YY7jPwtifXv1k0dkMLgL8Vfbo0bNM0HvYXW-uLV6msPvizK4TIqs72o-1hXslFbK1H8oawtuWVJgIYLgxsMkdUDrm15dv2JcP5ixt31G8Dtu3QIEM17YTvG564mNju-wei9W0SeOp-tWpCjqh9dpng9x-L26uGn6w'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                rawData = data;
+
+                let companies = data;
+                if (data.data && Array.isArray(data.data)) {
+                    companies = data.data;
+                } else if (data.companies && Array.isArray(data.companies)) {
+                    companies = data.companies;
+                } else if (!Array.isArray(data)) {
+                    throw new Error('Data format tidak sesuai. Expected array.');
+                }
+
+                extractedData = companies.map(item => ({
+                    name: item.name,
+                    symbol: item.symbol,
+                    marketcap: item.marketcap,
+                    value: item.value,
+                    valuema20: item.valuema20,
+                    volume: item.volume
+                }));
+
+                const seniorSymbols = seniorStocks.map(s => s.symbol);
+                seniorStocksData = extractedData.filter(item => 
+                    seniorSymbols.includes(item.symbol)
+                ).map(item => {
+                    const seniorInfo = seniorStocks.find(s => s.symbol === item.symbol);
+                    return {
+                        ...item,
+                        listingDate: seniorInfo.listingDate
+                    };
+                });
+
+                document.getElementById('seniorCount').textContent = seniorStocksData.length;
+
+                displayTable(extractedData, 'allTableContainer', false);
+
+                displayTable(seniorStocksData, 'seniorTableContainer', true);
+
+                displayTable(extractedData, 'tableContainer', false);
+
+                document.getElementById('jsonContainer').textContent = JSON.stringify(extractedData, null, 2);
+
+                showStatus(`Berhasil mengambil ${extractedData.length} data saham`, 'success');
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+                console.error('Error:', error);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function displayTable(data, containerId = 'tableContainer', showListingDate = false) {
+            const listingDateHeader = showListingDate ? '<th>Tanggal Listing</th>' : '';
+            const tableHtml = `
+                <div class="sort-controls">
+                    <label>Urutkan berdasarkan:</label>
+                    <select onchange="sortData(this.value)">
+                        <option value="">-- Pilih --</option>
+                        <option value="name">Nama (A-Z)</option>
+                        <option value="symbol">Symbol (A-Z)</option>
+                        <option value="marketcap">Market Cap (Tertinggi)</option>
+                        <option value="value">Value (Tertinggi)</option>
+                        <option value="valuema20">Value MA20 (Tertinggi)</option>
+                        <option value="volume">Volume (Tertinggi)</option>
+                    </select>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th class="sortable" onclick="sortData('name')">Name</th>
+                            <th class="sortable" onclick="sortData('symbol')">Symbol</th>
+                            ${listingDateHeader}
+                            <th class="sortable number" onclick="sortData('marketcap')">Market Cap</th>
+                            <th class="sortable number" onclick="sortData('value')">Value</th>
+                            <th class="sortable number" onclick="sortData('valuema20')">Value MA20</th>
+                            <th class="sortable number" onclick="sortData('volume')">Volume</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.map((item, index) => {
+                            const listingDateCell = showListingDate ? `<td>${item.listingDate || '-'}</td>` : '';
+                            return `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${item.name}</td>
+                                <td><strong>${item.symbol}</strong></td>
+                                ${listingDateCell}
+                                <td class="number">${formatMarketCap(item.marketcap)}</td>
+                                <td class="number ${parseFloat(item.value) >= 0 ? 'positive' : 'negative'}">
+                                    ${formatNumber(item.value)}
+                                </td>
+                                <td class="number">${formatNumber(item.valuema20)}</td>
+                                <td class="number">${formatNumber(item.volume)}</td>
+                            </tr>
+                        `}).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById(containerId).innerHTML = tableHtml;
+            updateSortIndicators();
+        }
+
+        window.onload = () => {
+            fetchData();
+        };
+    </script>
+</body>
+</html>

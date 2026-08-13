@@ -1,0 +1,5 @@
+Type,Min,Max,Centroid_Price,Std_Internal,Strength,Zone_Boundary,Norm_Distance,Current_Price,Score,Ranking
+Resistance,205,245,225,19.87,112,225.0,0.1538,195.0,683.57,1
+Resistance,298,353,325,27.59,26,325.0,0.6667,195.0,38.42,2
+Support,180,190,185,5.2,27,185.0,0.0513,195.0,440.59,1
+Support,158,165,162,3.72,21,162.0,0.1692,195.0,117.17,2
